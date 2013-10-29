@@ -1,5 +1,5 @@
 (function() {
-  var express, path, drone, server, app, faye;
+  var express, path, drone, server, app, faye, client;
 
   express = require("express");
   path = require("path");
@@ -19,6 +19,11 @@
   }); 
 
   bayeux.attach(server); // attached to server; will handle all requests to paths matching the mount path and delegate all other requests to handlers.
+
+  client = new faye.Client("http://localhost:" + (app.get("port")) + "/faye", {  // sets up new client at environmental port that accesses the server at the /faye mount
+    timeout: 60, // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
+    retry: 5 // may need to adjust. How often the client will try to reconnect if connection to server is lost
+  }); 
 
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
