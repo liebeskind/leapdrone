@@ -1,8 +1,9 @@
 (function() {
-  var express, path, drone, server, app;
+  var express, path, drone, server, app, hero;
 
   express = require("express");
   path = require("path");
+  hero = require("actionHero").actionHero;
   app = express();
   app.configure(function() {
   	app.set('port', process.env.PORT || 3001); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
