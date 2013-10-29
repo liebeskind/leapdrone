@@ -42,7 +42,13 @@ console.log('starts');
   };
 
   $(document).keydown(function(d) {
-    console.log(keymap[d.keyCode]);
+    var action;
+    if (!keymap[d.keyCode]) { // if key pressed is not assigned in the keymap above, return out of the function.
+      return;
+    }
+    d.preventDefault(); // prevents a key's default action from occuring
+    action = keymap[d.keyCode].action; // pulls the action parameter from the key pressed
+    console.log(action); 
   });
 }).call(this);
 
