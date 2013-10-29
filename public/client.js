@@ -1,6 +1,8 @@
 (function() {
 var keymap, faye;
 
+console.log('starts');
+
   faye = new Faye.Client("/faye", {
     timeout: 120, // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
     retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
@@ -39,5 +41,8 @@ var keymap, faye;
     }
   };
 
-})
+  $(document).keydown(function(d) {
+    console.log(keymap[d]);
+  });
+}).call(this);
 

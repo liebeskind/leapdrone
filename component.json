@@ -1,0 +1,8 @@
+{
+  "name": "leap-browser-nodecopter",
+  "description": "Uses Node.js and Leap Motion to control an AR Drone and Broadway.js to stream video to the browser",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": "~1.8"
+  }
+}
