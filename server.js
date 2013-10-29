@@ -1,5 +1,5 @@
 (function() {
-  var express, faye, path, drone, server;
+  var express, path, drone, server, app;
 
   express = require("express");
   path = require("path");
@@ -7,6 +7,7 @@
   app.configure(function() {
   	app.set('port', process.env.PORT || 3001);
   	app.use(app.router);
+    app.use(express.static(__dirname + '/public'));
   });
 
   server = require('http').createServer(app);
