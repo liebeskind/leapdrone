@@ -4,6 +4,7 @@
   express = require("express");
   path = require("path");
   faye = require('faye');
+  drone = require("ar-drone").createClient();
   app = express();
   app.configure(function() {
   	app.set('port', process.env.PORT || 3001); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
@@ -23,13 +24,15 @@
 
   client = new faye.Client("http://localhost:" + (app.get("port")) + "/faye", {}); // sets up new client at environmental port that accesses the server at the /faye mount 
 
-  client.subscribe("/drone/move", function(action) {
-    console.log(action);
-  })
+  client.subscribe("/drone/move", function(d) {
+    console.log(d)
+    return drone[d.action](d.speed);
+  });
 
-  client.subscribe("/drone/drone", function(action) {
-    console.log(action);
-  })
+  client.subscribe("/drone/drone", function(d) {
+    console.log(d)
+    return drone[d.action](d.speed);
+  });
 
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
