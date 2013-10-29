@@ -1,5 +1,5 @@
 (function() {
-var keymap, faye;
+var keymap, faye, speed;
 
 console.log('starts');
 
@@ -48,7 +48,11 @@ console.log('starts');
     }
     d.preventDefault(); // prevents a key's default action from occuring
     action = keymap[d.keyCode].action; // pulls the action parameter from the key pressed
-    console.log(action); 
+    speed = 0.5; // should be more dynamic, but will move at half speed for now
+    return faye.publish("/drone/move", { // sends a message to /drone/ with details of the action and speed
+      action: action,
+      speed: speed
+    });
   });
 }).call(this);
 

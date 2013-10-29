@@ -23,6 +23,10 @@
 
   client = new faye.Client("http://localhost:" + (app.get("port")) + "/faye", {}); // sets up new client at environmental port that accesses the server at the /faye mount 
 
+  client.subscribe("/drone/move", function(action) {
+    console.log(action);
+  })
+
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
   })
