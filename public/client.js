@@ -37,9 +37,7 @@ var keymap, faye;
     13: { // enter
       action: 'land'
     }
-};
-
-
+  };
 
 })
 
