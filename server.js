@@ -27,6 +27,10 @@
     console.log(action);
   })
 
+  client.subscribe("/drone/drone", function(action) {
+    console.log(action);
+  })
+
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
   })

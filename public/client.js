@@ -54,5 +54,14 @@ console.log('starts');
       speed: speed
     });
   });
+
+  $(document).keyup(function() {
+    speed = 0;
+    return faye.publish("/drone/drone", {
+      action: 'stop',
+      speed: speed
+    });
+  });
+
 }).call(this);
 
