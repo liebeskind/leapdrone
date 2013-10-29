@@ -13,6 +13,13 @@
 
   server = require('http').createServer(app);
 
+  var bayeux = new faye.NodeAdapter({  // central messaging server for clients to communicate with one another; Can also add 'engine' property, which controls backend of the server (ie faye-redis) and 'ping' property, which is how often, in seconds, to send keep-alive ping messages over WebSocket and EventSource connections. Used if Faye server will be accessed through a proxy that kills idle connections.
+    mount: '/faye', // path on the host at which the Faye service is available (ie http://localhost:3001/faye).
+    timeout: 45  // maximum time to hold connection open before returning response. Given in seconds and must be smaller than timeout on frontend webserver. 
+  }); 
+
+  bayeux.attach(server); // attached to server; will handle all requests to paths matching the mount path and delegate all other requests to handlers.
+
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
   })
