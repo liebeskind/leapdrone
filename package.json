@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "3.x",
     "ar-drone": "git://github.com/felixge/node-ar-drone.git",
-    "actionHero": "6.4.x"
+    "actionHero": "6.4.x",
+    "faye": "1.x"
   }
 }
