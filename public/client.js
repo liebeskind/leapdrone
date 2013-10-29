@@ -42,7 +42,7 @@ console.log('starts');
   };
 
   $(document).keydown(function(d) {
-    console.log(keymap[d]);
+    console.log(keymap[d.keyCode]);
   });
 }).call(this);
 
