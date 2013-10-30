@@ -49,8 +49,7 @@ var keymap, faye, speed;
     speed = 0.5; // should be more dynamic, but will move at half speed for now
     if (d.keyCode === 32 || d.keyCode === 13) {
       return faye.publish("/drone/drone", { // sends a message to /drone/ with details of the action and speed
-        action: action,
-        speed: speed
+        action: action
       });
     } else {
       return faye.publish("/drone/move", { // sends a message to /drone/ with details of the action and speed

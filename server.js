@@ -31,11 +31,7 @@
 
   client.subscribe("/drone/drone", function(d) {
     console.log(d)
-    if (typeof d.action === 'function') { // handles takeoff and landing
-      return drone[d.action](d.speed);
-    } else {
-      return void 0; // takeoff and landing are not functions, so need to return undefined.  Void 0 ensures that returns as undefined, as undefined can be accidentally changed
-    }
+      return drone[d.action]();
   });
 
   server.listen(app.get('port'), function() {
