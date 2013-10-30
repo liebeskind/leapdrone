@@ -6,6 +6,12 @@ var keymap, faye, speed;
     retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
   });
 
+  faye.subscribe("/drone/image", function(src) {
+    return $("#camera").attr({
+      src: src
+    });
+  });
+
   keymap = {
     87: { // w
       action: 'front'
