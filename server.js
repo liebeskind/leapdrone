@@ -1,5 +1,5 @@
 (function() {
-  var express, path, drone, server, app, faye, client, lastPng, pngStream;
+  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore;
 
   express = require("express");
   path = require("path");
@@ -41,7 +41,14 @@
   
   pngStream.on("data", function(pngBuffer) {  // requires ffmpeg to be installed, which can be done with HomeBrew
     lastPng = pngBuffer;
+    if (pngIgnore === true) { // reduces interference with controls
+      return;
+    }
     client.publish("/drone/image", "/image/" + (Math.random())); // publishes each image to a randomly generated number
+    pngIgnore = true
+    return setTimeout ((function() { // png will only stream every 90ms, which allows plenty of time for control actions to be sent
+      return pngIgnore = false
+    }), 90);
   });
 
   app.get("/image/:id", function(req, res) {
