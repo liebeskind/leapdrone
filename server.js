@@ -5,7 +5,7 @@
   path = require("path");
   faye = require('faye');
   drone = require("ar-drone").createClient();
-  pngStream = drone.getPngStream();
+  pngStream = drone.getVideoStream();
   app = express();
   app.configure(function() {
   	app.set('port', process.env.PORT || 3001); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
@@ -39,23 +39,17 @@
   	return console.log("Express server listening on port" + app.get("port"));
   })
   
-  pngStream.on("data", function(pngBuffer) {  // requires ffmpeg to be installed, which can be done with HomeBrew
-    lastPng = pngBuffer;
-    if (pngIgnore === true) { // reduces interference with controls
-      return;
-    }
-    client.publish("/drone/image", "/image/" + (Math.random())); // publishes each image to a randomly generated number
-    pngIgnore = true
-    return setTimeout ((function() { // png will only stream every 90ms, which allows plenty of time for control actions to be sent
-      return pngIgnore = false
-    }), 90);
-  });
+  pngStream.on("data", function(data) {
+    client.publish("/drone/image", "/image/" + (Math.random()))
+    console.log(data);
+  }); // publishes each image to a randomly generated number
+  pngStream.on('error', console.log)  
 
   app.get("/image/:id", function(req, res) {
     res.writeHead(200, {
       "Content-Type": "image/png"
     });
-    return res.end(lastPng);
+    return res.end();
   });
 
 }).call(this);
