@@ -1,11 +1,15 @@
 (function() {
-  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore;
+  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore, parser, PaVEParser, output, buffer;
 
   express = require("express");
   path = require("path");
   faye = require('faye');
   drone = require("ar-drone").createClient();
-  pngStream = drone.getVideoStream();
+  
+  output = require('fs').createWriteStream('./vid.h264');
+  PaVEParser = require(__dirname + '/node_modules/ar-drone/lib/video/PaVEParser');
+  parser = new PaVEParser();
+  video = drone.getVideoStream();
   app = express();
   app.configure(function() {
   	app.set('port', process.env.PORT || 3001); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
@@ -13,6 +17,8 @@
     app.use(express.static(__dirname + '/public'));  // serves static files from disk
     return app.use("/bower_components", express.static(path.join(__dirname, 'bower_components'))); // adds in jQuery
   });
+
+  
 
   server = require('http').createServer(app);
 
@@ -38,18 +44,24 @@
   server.listen(app.get('port'), function() {
   	return console.log("Express server listening on port" + app.get("port"));
   })
-  
-  pngStream.on("data", function(data) {
+
+  parser.on('data', function(data) {
+    buffer = data;
+    output.write(data.payload);
     client.publish("/drone/image", "/image/" + (Math.random()))
-    console.log(data);
-  }); // publishes each image to a randomly generated number
-  pngStream.on('error', console.log)  
+  })
+  .on('end', function() {
+    output.end();
+  });
+
+  video.pipe(parser);
 
   app.get("/image/:id", function(req, res) {
     res.writeHead(200, {
       "Content-Type": "image/png"
     });
-    return res.end();
+    console.log(video._events.data)
+    return res.end(parser._parser._buffer);
   });
 
 }).call(this);
