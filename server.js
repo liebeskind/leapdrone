@@ -1,10 +1,11 @@
 (function() {
-  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore;
+  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore, leap;
 
   express = require("express");
   path = require("path");
   faye = require('faye');
   drone = require("ar-drone").createClient();
+  leap    = require('leapjs').Leap;
   pngStream = drone.getPngStream();
   app = express();
   app.configure(function() {
@@ -46,9 +47,9 @@
     }
     client.publish("/drone/image", "/image/" + (Math.random())); // publishes each image to a randomly generated number
     pngIgnore = true
-    return setTimeout ((function() { // png will only stream every 90ms, which allows plenty of time for control actions to be sent
+    return setTimeout ((function() { // png will only stream every 80ms, which allows plenty of time for control actions to be sent
       return pngIgnore = false
-    }), 90);
+    }), 80);
   });
 
   app.get("/image/:id", function(req, res) {
