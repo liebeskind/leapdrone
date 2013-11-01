@@ -31,12 +31,12 @@
 
    var main = function() {
    	if (!active) return;
-   	handPos(frames);
+   	handPos(frame);
    }
 
-   var handPos = function(frames) {
-     var hands = frames.hands
-     if (hands) {
+   var handPos = function(frame) {
+     var hands = frame.hands
+     if (hands.length > 0) {
        var handOne = hands[0];
        var pos = handOne.palmPosition;
        var xPos = pos[0];
@@ -47,7 +47,48 @@
        var adjY = (yPos - 60) / 500;
        var adjZ = zPos / 200;
 
+       if (adjX < 0 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'left',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       } else if (adjX > 0 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'right',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       }
 
+       if (adjY > 0.5 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'up',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       } else if (adjY < 0.5 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'down',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       }
+
+       if (adjZ < 0 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'front',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       } else if (adjZ > 0 && ref.fly) {
+         return faye.publish("/drone/move", {
+      	   action: 'back',
+      	   speed: speed // can refactor to control based on extent of finger movement
+   			 });
+       }
+     
+     } else {
+      return faye.publish("/drone/drone", {
+        action: 'stop',
+        speed: speed
+      });
+     }
 
      }
    }
