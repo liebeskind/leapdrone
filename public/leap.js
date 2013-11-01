@@ -29,9 +29,14 @@
    	active = false;
    }
 
+   var start = function() {
+    active = true;
+   }
+
    var main = function() {
    	if (!active) return;
    	handPos(frame);
+    gestureHandler(frame);
    }
 
    var handPos = function(frame) {
@@ -89,7 +94,24 @@
         speed: speed
       });
      }
-
-     }
    }
+
+   var gestureHandler = function(frame) {
+     var gestures = frame.gestures;
+
+     if (gestures && gestures.length > 0) {
+        for( var i = 0; i < gestures.length; i++ ) {
+           var gesture = gestures[i];
+           if ( gesture.type === 'keyTap' ) {
+              if (ref.fly) {
+                takeoff();
+              } else {
+                land();
+              }
+           }
+        }
+     }
+
+   }
+
  }).call(this);
