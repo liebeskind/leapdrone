@@ -2,8 +2,8 @@
 var keymap, faye, speed;
 
   faye = new Faye.Client("/faye", {
-    timeout: 120, // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
-    retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
+    // timeout: 20, // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
+    // retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
   });
 
   faye.subscribe("/drone/image", function(src) {
@@ -42,6 +42,9 @@ var keymap, faye, speed;
     },
     13: { // enter
       action: 'land'
+    },
+    49: { // '1'
+      action: 'disableEmergency'
     }
   };
 
@@ -53,7 +56,7 @@ var keymap, faye, speed;
     d.preventDefault(); // prevents a key's default action from occuring
     action = keymap[d.keyCode].action; // pulls the action parameter from the key pressed
     speed = 0.5; // should be more dynamic, but will move at half speed for now
-    if (d.keyCode === 32 || d.keyCode === 13) {
+    if (d.keyCode === 32 || d.keyCode === 13 || d.keyCode === 46) {
       return faye.publish("/drone/drone", { // sends a message to /drone/ with details of the action and speed
         action: action
       });
