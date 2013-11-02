@@ -6694,7 +6694,6 @@ module.exports = function() {
 },{}],20:[function(require,module,exports){
 (function() {
 
-  console.log("leap active");
 
   var controller, circleCount, active, flying, ref, speed, leap, faye;
 
@@ -6707,7 +6706,7 @@ module.exports = function() {
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
-	controller.on('frame', console.log('controller active'));
+
 	
   active = false;
 	flying = false;
