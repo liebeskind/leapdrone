@@ -10,15 +10,15 @@
   active = true;
   flying = true;
   ref = {};
-  ref.fly = true;
+  ref.fly = false;
   speed = 0.4;
   timeout = 400;
   speedAdjuster = 2.5;
 
    var main = function(frame) {
     if (!active) return;
+    gestureHandler(frame);
     handPos(frame);
-    // gestureHandler(frame);
    }
 
   var takeoff = function() {
@@ -106,28 +106,27 @@
      } else {
       setTimeout(function(){
       return faye.publish("/drone/drone", {
-        action: 'stop',
-        speed: speed
+        action: 'stop'
       })}, timeout/4);
      }
    }
 
-   // var gestureHandler = function(frame) {
-   //   var gestures = frame.gestures;
+   var gestureHandler = function(frame) {
+     var gestures = frame.gestures;
 
-   //   if (gestures && gestures.length > 0) {
-   //      for( var i = 0; i < gestures.length; i++ ) {
-   //         var gesture = gestures[i];
-   //         if ( gesture.type === 'keyTap' ) {
-   //            if (ref.fly) {
-   //              takeoff();
-   //            } else {
-   //              land();
-   //            }
-   //         }
-   //      }
-   //   }
-   // }
+     if (gestures && gestures.length > 0) {
+        for( var i = 0; i < gestures.length; i++ ) {
+           var gesture = gestures[i];
+           if ( gesture.type === 'keyTap' ) {
+              if (ref.fly) {
+                land();
+              } else {
+                takeoff();
+              }
+           }
+        }
+     }
+   }
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
