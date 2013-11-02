@@ -1,14 +1,27 @@
 (function() {
 
-	var controller, circleCount, active, flying, ref, speed;
+  console.log("leap active");
 
-  controller = new leap.Controller({enableGestures: true});
-  controller.connect();
-	controller.on('frame', this.loop.bind(this));
-	active = false;
-	flying = false;
-	ref = {};
-	speed = 0.5;
+  var controller, circleCount, active, flying, ref, speed, leap, faye;
+
+  faye = new Faye.Client("/faye", {
+    timeout: 60 // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
+    // retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
+  });
+
+
+  active = true;
+  flying = true;
+  ref = {};
+  speed = 0.5;
+
+   var main = function(frame) {
+    console.log("main running");
+    if (!active) return;
+    console.log('active');
+    handPos(frame);
+    gestureHandler(frame);
+   }
 
   var takeoff = function() {
   	ref.fly = true;
@@ -33,16 +46,12 @@
     active = true;
    }
 
-   var main = function() {
-   	if (!active) return;
-   	handPos(frame);
-    gestureHandler(frame);
-   }
-
    var handPos = function(frame) {
      var hands = frame.hands
+     console.log("hand pos")
      if (hands.length > 0) {
        var handOne = hands[0];
+       console.log("I see your hand");
        var pos = handOne.palmPosition;
        var xPos = pos[0];
        var yPos = pos[1];
@@ -111,7 +120,10 @@
            }
         }
      }
-
    }
+
+  controller = new Leap.Controller({enableGestures: true});
+  controller.connect();
+  controller.on('frame', main());
 
  }).call(this);
