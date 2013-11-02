@@ -1,6 +1,6 @@
 (function() {
 
-  var controller, ref, speed, leap, faye, timeout, speedAdjuster;
+  var controller, ref, speed, leap, faye, timeout, speedAdjuster, rotate;
 
   faye = new Faye.Client("/faye", {
     timeout: 60 // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
@@ -12,6 +12,7 @@
   speed = 0.4;
   timeout = 400;
   speedAdjuster = 2.5;
+  rotate = false;
 
    var main = function(frame) {
     gestureHandler(frame);
@@ -37,6 +38,10 @@
       action: 'counterClockwise',
       speed: speed
     })
+    setTimeout(function(){
+      return faye.publish("/drone/drone", {
+        action: 'stop'
+      })}, 1000);
    };
 
    var clockwise = function() {
@@ -44,6 +49,10 @@
       action: 'clockwise',
       speed: speed
     })
+    setTimeout(function(){
+      return faye.publish("/drone/drone", {
+        action: 'stop'
+      })}, 1000);
    }
 
    var handPos = function(frame) {
@@ -51,6 +60,7 @@
      if (hands.length > 0) {
        var handOne = hands[0];
        console.log("I see your hand")
+       rotate = true;
 
        var pos = handOne.palmPosition;
        
@@ -110,7 +120,7 @@
       setTimeout(function(){
       return faye.publish("/drone/drone", {
         action: 'stop'
-      })}, timeout/4);
+      })}, timeout);
      }
    }
 
@@ -119,8 +129,9 @@
      if (gestures && gestures.length > 0) {
         for( var i = 0; i < gestures.length; i++ ) {
            var gesture = gestures[i];
-           if (gesture.type === 'circle' && ref.fly) {
-              if (gesture.state === 'update') {
+           if (gesture.type === 'circle' && ref.fly && rotate) {
+              rotate = false;
+              // if (gesture.state === 'start') {
                  console.log('a circle');
                  gesture.pointable = frame.pointable(gesture.pointableIds[0]);
                  direction = gesture.pointable.direction;
@@ -133,7 +144,7 @@
                       return counterClockwise();
                     }
                   }
-              }
+              // }
            } else if ( gesture.type === 'keyTap' ) {
               if (ref.fly) {
                 land();
