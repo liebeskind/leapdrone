@@ -1,29 +1,25 @@
 (function() {
 
-  var controller, active, flying, ref, speed, leap, faye, timeout, speedAdjuster;
+  var controller, ref, speed, leap, faye, timeout, speedAdjuster;
 
   faye = new Faye.Client("/faye", {
     timeout: 60 // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
     // retry: 2 // may need to adjust. How often the client will try to reconnect if connection to server is lost
   });
 
-  active = true;
-  flying = true;
   ref = {};
-  ref.fly = false;
+  ref.fly = true;
   speed = 0.4;
   timeout = 400;
   speedAdjuster = 2.5;
 
    var main = function(frame) {
-    if (!active) return;   
     gestureHandler(frame);
     handPos(frame);
    }
 
   var takeoff = function() {
   	ref.fly = true;
-  	active = true;
   	return faye.publish("/drone/drone", {
       action: 'takeoff'
     });
@@ -50,18 +46,11 @@
     })
    }
 
-   var stop = function() {
-   	active = false;
-   }
-
-   var start = function() {
-    active = true;
-   }
-
    var handPos = function(frame) {
      var hands = frame.hands
      if (hands.length > 0) {
        var handOne = hands[0];
+       console.log("I see your hand")
 
        var pos = handOne.palmPosition;
        
@@ -130,7 +119,7 @@
      if (gestures && gestures.length > 0) {
         for( var i = 0; i < gestures.length; i++ ) {
            var gesture = gestures[i];
-           if (gesture.type === 'circle') {
+           if (gesture.type === 'circle' && ref.fly) {
               if (gesture.state === 'update') {
                  console.log('a circle');
                  gesture.pointable = frame.pointable(gesture.pointableIds[0]);
@@ -138,7 +127,7 @@
                  if(direction) {
                     var normal = gesture.normal;
                     clockwisely = Leap.vec3.dot(direction, normal) > 0;
-                    if(clockwisely && ref.fly) {
+                    if(clockwisely) {
                       return clockwise();
                     } else {
                       return counterClockwise();
