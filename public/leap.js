@@ -1,6 +1,6 @@
 (function() {
 
-  var controller, circleCount, active, flying, ref, speed, leap, faye, timeout, speedAdjuster;
+  var controller, active, flying, ref, speed, leap, faye, timeout, speedAdjuster;
 
   faye = new Faye.Client("/faye", {
     timeout: 60 // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
@@ -16,8 +16,8 @@
   speedAdjuster = 2.5;
 
    var main = function(frame) {
-    if (!active) return;
-    gestureHandler(frame);
+    if (!active) return;   
+    // gestureHandler(frame);
     handPos(frame);
    }
 
@@ -34,6 +34,20 @@
   	return faye.publish("/drone/drone", {
       action: 'land'
     });
+   }
+
+   var counterClockwise = function() {
+    return faye.publish("/drone/move", {
+      action: 'counterClockwise',
+      speed: speed
+    })
+   };
+
+   var clockwise = function() {
+    return faye.publish("/drone/move", {
+      action: 'clockwise',
+      speed: speed
+    })
    }
 
    var stop = function() {
@@ -111,22 +125,36 @@
      }
    }
 
-   var gestureHandler = function(frame) {
-     var gestures = frame.gestures;
-
-     if (gestures && gestures.length > 0) {
-        for( var i = 0; i < gestures.length; i++ ) {
-           var gesture = gestures[i];
-           if ( gesture.type === 'keyTap' ) {
-              if (ref.fly) {
-                land();
-              } else {
-                takeoff();
-              }
-           }
-        }
-     }
-   }
+   // var gestureHandler = function(frame) {
+   //   var gestures = frame.gestures;
+   //   if (gestures && gestures.length > 0) {
+   //      for( var i = 0; i < gestures.length; i++ ) {
+   //         var gesture = gestures[0];
+   //         if (gesture.type === 'circle') {
+   //            if (gesture.state === 'start') {
+   //               console.log('a circle');
+   //               gesture.pointable = frame.pointable(gesture.pointableIds[0]);
+   //               direction = gesture.pointable.direction;
+   //               if(direction) {
+   //                  var normal = gesture.normal;
+   //                  clockwisely = Leap.vec3.dot(direction, normal) > 0;
+   //                  if(clockwisely) {
+   //                    clockwise();
+   //                  } else {
+   //                    counterClockwise();
+   //                  }
+   //                }
+   //            }
+   //         } else if ( gesture.type === 'keyTap' ) {
+   //            if (ref.fly) {
+   //              land();
+   //            } else {
+   //              takeoff();
+   //            }
+   //         }
+   //      }
+   //   }
+   // };
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
