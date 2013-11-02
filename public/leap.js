@@ -12,7 +12,7 @@
   ref = {};
   ref.fly = true;
   speed = 0.1;
-  timeout = 300;
+  timeout = 400;
 
    var main = function(frame) {
     if (!active) return;
