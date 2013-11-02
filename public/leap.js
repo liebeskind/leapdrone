@@ -17,7 +17,7 @@
 
    var main = function(frame) {
     if (!active) return;   
-    // gestureHandler(frame);
+    gestureHandler(frame);
     handPos(frame);
    }
 
@@ -125,36 +125,36 @@
      }
    }
 
-   // var gestureHandler = function(frame) {
-   //   var gestures = frame.gestures;
-   //   if (gestures && gestures.length > 0) {
-   //      for( var i = 0; i < gestures.length; i++ ) {
-   //         var gesture = gestures[0];
-   //         if (gesture.type === 'circle') {
-   //            if (gesture.state === 'start') {
-   //               console.log('a circle');
-   //               gesture.pointable = frame.pointable(gesture.pointableIds[0]);
-   //               direction = gesture.pointable.direction;
-   //               if(direction) {
-   //                  var normal = gesture.normal;
-   //                  clockwisely = Leap.vec3.dot(direction, normal) > 0;
-   //                  if(clockwisely) {
-   //                    clockwise();
-   //                  } else {
-   //                    counterClockwise();
-   //                  }
-   //                }
-   //            }
-   //         } else if ( gesture.type === 'keyTap' ) {
-   //            if (ref.fly) {
-   //              land();
-   //            } else {
-   //              takeoff();
-   //            }
-   //         }
-   //      }
-   //   }
-   // };
+   var gestureHandler = function(frame) {
+     var gestures = frame.gestures;
+     if (gestures && gestures.length > 0) {
+        for( var i = 0; i < gestures.length; i++ ) {
+           var gesture = gestures[i];
+           if (gesture.type === 'circle') {
+              if (gesture.state === 'update') {
+                 console.log('a circle');
+                 gesture.pointable = frame.pointable(gesture.pointableIds[0]);
+                 direction = gesture.pointable.direction;
+                 if(direction) {
+                    var normal = gesture.normal;
+                    clockwisely = Leap.vec3.dot(direction, normal) > 0;
+                    if(clockwisely && ref.fly) {
+                      return clockwise();
+                    } else {
+                      return counterClockwise();
+                    }
+                  }
+              }
+           } else if ( gesture.type === 'keyTap' ) {
+              if (ref.fly) {
+                land();
+              } else {
+                takeoff();
+              }
+           }
+        }
+     }
+   };
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();

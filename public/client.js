@@ -70,10 +70,8 @@
   });
 
   $(document).keyup(function() {  // stops the drone when no key is pressed
-    speed = 0;
     return faye.publish("/drone/drone", {
-      action: 'stop',
-      speed: speed
+      action: 'stop'
     });
   });
 
