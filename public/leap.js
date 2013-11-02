@@ -1,6 +1,6 @@
 (function() {
 
-  var controller, circleCount, active, flying, ref, speed, leap, faye, timeout;
+  var controller, circleCount, active, flying, ref, speed, leap, faye, timeout, speedAdjuster;
 
   faye = new Faye.Client("/faye", {
     timeout: 60 // may need to adjust. If server doesn't send back any data for the given period of time, the client will assume the server has gone away and will attempt to reconnect. Timeout is given in seconds and should be larger than timeout on server side to give the server ample time to respond.
@@ -11,8 +11,9 @@
   flying = true;
   ref = {};
   ref.fly = true;
-  speed = 0.1;
+  speed = 0.4;
   timeout = 400;
+  speedAdjuster = 2.5;
 
    var main = function(frame) {
     if (!active) return;
@@ -47,7 +48,6 @@
      var hands = frame.hands
      if (hands.length > 0) {
        var handOne = hands[0];
-       console.log("I see your hand");
 
        var pos = handOne.palmPosition;
        
@@ -55,25 +55,27 @@
        var yPos = pos[1];
        var zPos = pos[2];
 
-       var adjX = xPos / 250;
-       var adjY = (yPos - 60) / 500;
-       var adjZ = zPos / 200;
+       var adjX = xPos / 250; // -1.5 to 1.5
+       var adjXspeed = Math.abs(adjX)/ speedAdjuster;
+       var adjY = (yPos - 60) / 500; // 0 to .8
+       var adjZ = zPos / 250; // -2 to 2
+       var adjZspeed = Math.abs(adjZ) / speedAdjuster;
 
        if (adjX < 0 && ref.fly) {
           setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'left',
-      	   speed: speed // can refactor to control based on extent of finger movement 
+      	   speed: adjXspeed // can refactor to control based on extent of finger movement 
    			 })}, timeout);
        } else if (adjX > 0 && ref.fly) {
           setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'right',
-      	   speed: speed // can refactor to control based on extent of finger movement
+      	   speed: adjXspeed // can refactor to control based on extent of finger movement
    			 })}, timeout);
        }
 
-       if (adjY > 0.5 && ref.fly) {
+       if (adjY > 0.4 && ref.fly) {
          setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'up',
@@ -91,13 +93,13 @@
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'front',
-      	   speed: speed // can refactor to control based on extent of finger movement
+      	   speed: adjZspeed // can refactor to control based on extent of finger movement
    			 })}, timeout/3);
        } else if (adjZ > 0 && ref.fly) {
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'back',
-      	   speed: speed // can refactor to control based on extent of finger movement
+      	   speed: adjZspeed // can refactor to control based on extent of finger movement
    			 })}, timeout/3);
        }
      
