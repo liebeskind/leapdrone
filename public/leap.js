@@ -8,83 +8,58 @@
   });
 
   ref = {};
-  ref.fly = true;
-  speed = 0.4;
-  timeout = 400;
-  speedAdjuster = 2.5;
-  rotate = false;
+  ref.fly = true; // used to prevent action while drone is dormant
+  timeout = 400;  // used for each server publish
+  speedAdjuster = 3.5; // higher number decreases action speed.  DO NOT set to less than 1
 
-   var main = function(frame) {
-    gestureHandler(frame);
-    handPos(frame);
+   var mainRoutine = function(frame) { // Runs on every frame
+    gestureHandler(frame);  // routine for handling takeoff, landing and rotations
+    handPos(frame); // all other actions
    }
 
   var takeoff = function() {
-  	ref.fly = true;
+  	ref.fly = true; // enables actions to be published
   	return faye.publish("/drone/drone", {
       action: 'takeoff'
     });
    }
 
    var land = function() {
-  	ref.fly = false;	
+  	ref.fly = false;	// prevents faye from publishing actions when drone has landed
   	return faye.publish("/drone/drone", {
       action: 'land'
     });
    }
 
-   var counterClockwise = function() {
-    return faye.publish("/drone/move", {
-      action: 'counterClockwise',
-      speed: speed
-    })
-    setTimeout(function(){
-      return faye.publish("/drone/drone", {
-        action: 'stop'
-      })}, 1000);
-   };
-
-   var clockwise = function() {
-    return faye.publish("/drone/move", {
-      action: 'clockwise',
-      speed: speed
-    })
-    setTimeout(function(){
-      return faye.publish("/drone/drone", {
-        action: 'stop'
-      })}, 1000);
-   }
-
    var handPos = function(frame) {
-     var hands = frame.hands
+     var hands = frame.hands // leap detects all hands in field of vision
      if (hands.length > 0) {
-       var handOne = hands[0];
-       console.log("I see your hand")
-       rotate = true;
+       var handOne = hands[0]; // first hand.  Can add second hand
 
-       var pos = handOne.palmPosition;
+       var pos = handOne.palmPosition;  // tracks palm of first hand
        
-       var xPos = pos[0];
-       var yPos = pos[1];
-       var zPos = pos[2];
+       var xPos = pos[0]; // position of hand on x axis
+       var yPos = pos[1]; // position of hand on y axis
+       var zPos = pos[2]; // position of hand on z axis
 
        var adjX = xPos / 250; // -1.5 to 1.5
-       var adjXspeed = Math.abs(adjX)/ speedAdjuster;
+       var adjXspeed = Math.abs(adjX)/ speedAdjuster; // left/right speed
        var adjY = (yPos - 60) / 500; // 0 to .8
+       var adjYspeed = Math.abs(.4-adjY) // up/down speed
        var adjZ = zPos / 250; // -2 to 2
-       var adjZspeed = Math.abs(adjZ) / speedAdjuster;
+       var adjZspeed = Math.abs(adjZ) / speedAdjuster; // front/back speed
 
-       if (adjX < 0 && ref.fly) {
+       if (adjX < 0 && ref.fly) { // ref.fly set in takeoff() and land() to prevent actions while drone landed
           setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'left',
-      	   speed: adjXspeed // can refactor to control based on extent of finger movement 
+      	   speed: adjXspeed
    			 })}, timeout);
        } else if (adjX > 0 && ref.fly) {
           setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'right',
-      	   speed: adjXspeed // can refactor to control based on extent of finger movement
+      	   speed: adjXspeed
    			 })}, timeout);
        }
 
@@ -92,13 +67,13 @@
          setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'up',
-      	   speed: speed // can refactor to control based on extent of finger movement
+      	   speed: adjYspeed
          })}, timeout/2);
        } else if (adjY < 0.5 && ref.fly) {
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'down',
-      	   speed: speed // can refactor to control based on extent of finger movement
+      	   speed: adjYspeed
    			 })}, timeout/2);
        }
 
@@ -106,13 +81,13 @@
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'front',
-      	   speed: adjZspeed // can refactor to control based on extent of finger movement
+      	   speed: adjZspeed
    			 })}, timeout/3);
        } else if (adjZ > 0 && ref.fly) {
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'back',
-      	   speed: adjZspeed // can refactor to control based on extent of finger movement
+      	   speed: adjZspeed
    			 })}, timeout/3);
        }
      
@@ -129,24 +104,25 @@
      if (gestures && gestures.length > 0) {
         for( var i = 0; i < gestures.length; i++ ) {
            var gesture = gestures[i];
-           if (gesture.type === 'circle' && ref.fly && rotate) {
-              rotate = false;
+           // if (gesture.type === 'circle' && ref.fly && rotate) {
+           //    rotate = false;
               // if (gesture.state === 'start') {
-                 console.log('a circle');
-                 gesture.pointable = frame.pointable(gesture.pointableIds[0]);
-                 direction = gesture.pointable.direction;
-                 if(direction) {
-                    var normal = gesture.normal;
-                    clockwisely = Leap.vec3.dot(direction, normal) > 0;
-                    if(clockwisely) {
-                      return clockwise();
-                    } else {
-                      return counterClockwise();
-                    }
-                  }
+              //    console.log('a circle');
+              //    gesture.pointable = frame.pointable(gesture.pointableIds[0]);
+              //    direction = gesture.pointable.direction;
+              //    if(direction) {
+              //       var normal = gesture.normal;
+              //       clockwisely = Leap.vec3.dot(direction, normal) > 0;
+              //       if(clockwisely) {
+              //         return clockwise();
+              //       } else {
+              //         return counterClockwise();
+              //       }
+              //     }
               // }
-           } else if ( gesture.type === 'keyTap' ) {
-              if (ref.fly) {
+           // } else 
+           if ( gesture.type === 'keyTap' ) { // motion that looks like clicking a mouse controls takeoff and landing
+              if (ref.fly) { // ref.fly set in the takeoff() function and ensures that drone will land while flying and takeoff while dormant
                 land();
               } else {
                 takeoff();
@@ -156,10 +132,35 @@
      }
    };
 
+// speed = 0.4; // used for rotation speed
+
+   // var counterClockwise = function() {
+   //  return faye.publish("/drone/move", {
+   //    action: 'counterClockwise',
+   //    speed: speed
+   //  })
+   //  setTimeout(function(){
+   //    return faye.publish("/drone/drone", {
+   //      action: 'stop'
+   //    })}, 700);
+   // };
+
+   // var clockwise = function() {
+   //  return faye.publish("/drone/move", {
+   //    action: 'clockwise',
+   //    speed: speed
+   //  })
+   //  setTimeout(function(){
+   //    return faye.publish("/drone/drone", {
+   //      action: 'stop'
+   //    })}, 700);
+   // }
+
+
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
   controller.on('frame', function(data) {
-    main(data)
+    mainRoutine(data)
   });
 
  }).call(this);
