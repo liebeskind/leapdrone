@@ -78,13 +78,13 @@
          return faye.publish("/drone/move", {
       	   action: 'up',
       	   speed: speed // can refactor to control based on extent of finger movement
-         })}, timeout);
+         })}, timeout/2);
        } else if (adjY < 0.5 && ref.fly) {
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'down',
       	   speed: speed // can refactor to control based on extent of finger movement
-   			 })}, timeout);
+   			 })}, timeout/2);
        }
 
        if (adjZ < 0 && ref.fly) {
@@ -92,39 +92,40 @@
          return faye.publish("/drone/move", {
       	   action: 'front',
       	   speed: speed // can refactor to control based on extent of finger movement
-   			 })}, timeout);
+   			 })}, timeout/3);
        } else if (adjZ > 0 && ref.fly) {
         setTimeout(function(){
          return faye.publish("/drone/move", {
       	   action: 'back',
       	   speed: speed // can refactor to control based on extent of finger movement
-   			 })}, timeout);
+   			 })}, timeout/3);
        }
      
      } else {
+      setTimeout(function(){
       return faye.publish("/drone/drone", {
         action: 'stop',
         speed: speed
-      });
+      })}, timeout/4);
      }
    }
 
-   var gestureHandler = function(frame) {
-     var gestures = frame.gestures;
+   // var gestureHandler = function(frame) {
+   //   var gestures = frame.gestures;
 
-     if (gestures && gestures.length > 0) {
-        for( var i = 0; i < gestures.length; i++ ) {
-           var gesture = gestures[i];
-           if ( gesture.type === 'keyTap' ) {
-              if (ref.fly) {
-                takeoff();
-              } else {
-                land();
-              }
-           }
-        }
-     }
-   }
+   //   if (gestures && gestures.length > 0) {
+   //      for( var i = 0; i < gestures.length; i++ ) {
+   //         var gesture = gestures[i];
+   //         if ( gesture.type === 'keyTap' ) {
+   //            if (ref.fly) {
+   //              takeoff();
+   //            } else {
+   //              land();
+   //            }
+   //         }
+   //      }
+   //   }
+   // }
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
