@@ -7,10 +7,11 @@
   drone = require("ar-drone").createClient();
   leap    = require('leapjs');
   browserify = require('browserify')
+  require("./public/video-feed.js");
   pngStream = drone.getPngStream();
   app = express();
   app.configure(function() {
-          app.set('port', process.env.PORT || 3001); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
+          app.set('port', process.env.PORT || 3000); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
           app.use(app.router);  // optimizes performance when put before static, but isn't necessary as express will implicity add.  Putting before static prevents accidentally-named static files from overwriting routes
     app.use(express.static(__dirname + '/public'));  // serves static files from disk
     app.use("/node_modules", express.static(path.join(__dirname, 'node_modules'))); // adds in jQuery
@@ -42,23 +43,23 @@
           return console.log("Express server listening on port" + app.get("port"));
   })
   
-  pngStream.on("data", function(pngBuffer) {  // requires ffmpeg to be installed, which can be done with HomeBrew
-    lastPng = pngBuffer;
-    if (pngIgnore === true) { // reduces interference with controls
-      return;
-    }
-    client.publish("/drone/image", "/image/" + (Math.random())); // publishes each image to a randomly generated number
-    pngIgnore = true
-    return setTimeout ((function() { // png will only stream every 80ms, which allows plenty of time for control actions to be sent
-      return pngIgnore = false
-    }), 80);
-  });
+  // pngStream.on("data", function(pngBuffer) {  // requires ffmpeg to be installed, which can be done with HomeBrew
+  //   lastPng = pngBuffer;
+  //   if (pngIgnore === true) { // reduces interference with controls
+  //     return;
+  //   }
+  //   client.publish("/drone/image", "/image/" + (Math.random())); // publishes each image to a randomly generated number
+  //   pngIgnore = true
+  //   return setTimeout ((function() { // png will only stream every 80ms, which allows plenty of time for control actions to be sent
+  //     return pngIgnore = false
+  //   }), 80);
+  // });
 
-  app.get("/image/:id", function(req, res) {
-    res.writeHead(200, {
-      "Content-Type": "image/png"
-    });
-    return res.end(lastPng);
-  });
+  // app.get("/image/:id", function(req, res) {
+  //   res.writeHead(200, {
+  //     "Content-Type": "image/png"
+  //   });
+  //   return res.end(lastPng);
+  // });
 
 }).call(this);
