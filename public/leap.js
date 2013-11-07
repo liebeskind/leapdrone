@@ -152,7 +152,7 @@
      }
    };
 
-speed = 0.4; // used for rotation speed
+speed = 0.6; // used for rotation speed
 
    var counterClockwise = function() {
     $(".counterClockwise").attr({id: 'highlight'})
