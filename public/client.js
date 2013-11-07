@@ -73,6 +73,7 @@ var keymap, faye, speed;
           action: action
         });
       } else {
+        $("#" + action).addClass('highlight')
         return faye.publish("/drone/move", { // sends a message to /drone/ with details of the action and speed
           action: action,
           speed: speed
