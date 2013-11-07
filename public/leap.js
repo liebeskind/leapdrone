@@ -124,23 +124,23 @@
      if (gestures && gestures.length > 0) {
         for( var i = 0; i < gestures.length; i++ ) {
            var gesture = gestures[i];
-           // if (gesture.type === 'circle' && ref.fly && rotate) {
-           //    rotate = false;
-           //    if (gesture.state === 'start') {
-           //       console.log('a circle');
-           //       gesture.pointable = frame.pointable(gesture.pointableIds[0]);
-           //       direction = gesture.pointable.direction;
-           //       if(direction) {
-           //          var normal = gesture.normal;
-           //          clockwisely = Leap.vec3.dot(direction, normal) > 0;
-           //          if(clockwisely) {
-           //            return clockwise();
-           //          } else {
-           //            return counterClockwise();
-           //          }
-           //        }
-           //    }
-           // } else 
+           if (gesture.type === 'circle' && ref.fly) {
+              rotate = false;
+              if (gesture.state === 'start') {
+                 console.log('a circle');
+                 gesture.pointable = frame.pointable(gesture.pointableIds[0]);
+                 direction = gesture.pointable.direction;
+                 if(direction) {
+                    var normal = gesture.normal;
+                    clockwisely = Leap.vec3.dot(direction, normal) > 0;
+                    if(clockwisely) {
+                      return clockwise();
+                    } else {
+                      return counterClockwise();
+                    }
+                  }
+              }
+           } else 
            if ( gesture.type === 'keyTap' ) { // motion that looks like clicking a mouse controls takeoff and landing
               if (ref.fly) { // ref.fly set in the takeoff() function and ensures that drone will land while flying and takeoff while dormant
                 land();
@@ -152,30 +152,33 @@
      }
    };
 
-// speed = 0.4; // used for rotation speed
+speed = 0.4; // used for rotation speed
 
-   // var counterClockwise = function() {
-   //  return faye.publish("/drone/move", {
-   //    action: 'counterClockwise',
-   //    speed: speed
-   //  })
-   //  setTimeout(function(){
-   //    return faye.publish("/drone/drone", {
-   //      action: 'stop'
-   //    })}, 700);
-   // };
+   var counterClockwise = function() {
+    $(".counterClockwise").attr({id: 'highlight'})
+    $(".clockwise").attr({id: ''})
+    faye.publish("/drone/move", {
+      action: 'counterClockwise',
+      speed: speed
+    })
+    setTimeout(function(){
+      return faye.publish("/drone/drone", {
+        action: 'stop'
+      })}, timeout);
+   };
 
-   // var clockwise = function() {
-   //  return faye.publish("/drone/move", {
-   //    action: 'clockwise',
-   //    speed: speed
-   //  })
-   //  setTimeout(function(){
-   //    return faye.publish("/drone/drone", {
-   //      action: 'stop'
-   //    })}, 700);
-   // }
-
+   var clockwise = function() {
+    $(".clockwise").attr({id: 'highlight'})
+    $(".counterClockwise").attr({id: ''})
+    faye.publish("/drone/move", {
+      action: 'clockwise',
+      speed: speed
+    })
+    setTimeout(function(){
+      return faye.publish("/drone/drone", {
+        action: 'stop'
+      })}, timeout);
+   }
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
