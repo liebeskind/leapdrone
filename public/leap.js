@@ -154,7 +154,7 @@
     }
   };
 
-  speed = 0.8; // used for rotation speed
+  speed = 0.7; // used for rotation speed
   var counterClockwise = function() {
     $(".counterClockwise").attr({id: 'highlight'})
     $(".clockwise").attr({id: ''})
@@ -166,7 +166,7 @@
       return faye.publish("/drone/drone", {
         action: 'stop'
       })
-    }, timeout*2);
+    }, timeout);
    };
 
   var clockwise = function() {
@@ -180,7 +180,7 @@
       return faye.publish("/drone/drone", {
         action: 'stop'
       })
-    }, timeout*2);
+    }, timeout);
   }
 
   controller = new Leap.Controller({enableGestures: true});

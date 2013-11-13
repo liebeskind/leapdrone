@@ -6,7 +6,6 @@
   faye = require('faye');
   drone = require("ar-drone").createClient();
   leap = require('leapjs');
-  browserify = require('browserify')
   require("./public/video-feed.js");
   app = express();
   app.configure(function () {

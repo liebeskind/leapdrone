@@ -5,7 +5,7 @@
   $('form').on('submit', function(data){
     data.preventDefault()
     password = data.target[0].value;
-    $('#submission').val('');
+    $('#submission').val(' ');
   })
 
   faye = new Faye.Client("/faye", {
