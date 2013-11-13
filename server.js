@@ -1,12 +1,12 @@
 (function () {
-  var express, path, drone, server, app, faye, client, lastPng, pngStream, pngIgnore, leap, controller, browserify;
+  var express, path, drone, server, app, faye, client, leap, controller;
 
   express = require("express");
   path = require("path");
   faye = require('faye');
-  drone = require("ar-drone").createClient();
+  drone = require("ar-drone").createClient(); // enables communication with drone in javascript
   leap = require('leapjs');
-  require("./public/video-feed.js");
+  require("dronestream").listen(3001); // for video rendering
   app = express();
   app.configure(function () {
     app.set('port', process.env.PORT || 3000); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
@@ -27,17 +27,17 @@
 
   client = new faye.Client("http://localhost:" + (app.get("port")) + "/faye", {}); // sets up new client at environmental port that accesses the server at the /faye mount 
 
-  client.subscribe("/drone/move", function(d) { // move includes any directional actions
+  client.subscribe("/drone/move", function (d) { // move includes any directional actions
     console.log(d);
     return drone[d.action](d.speed);
   });
 
-  client.subscribe("/drone/drone", function(d) { // drone commands include takeoff and landing
+  client.subscribe("/drone/drone", function (d) { // drone commands include takeoff and landing
     console.log(d);
       return drone[d.action]();
   });
 
-  server.listen(app.get('port'), function() {
+  server.listen(app.get('port'), function () {
     return console.log("Express server listening on port" + app.get("port"));
   })
 

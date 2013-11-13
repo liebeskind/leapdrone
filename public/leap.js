@@ -10,31 +10,31 @@
   timeout = 400;  // used for each server publish
   speedAdjuster = 3.5; // higher number decreases action speed.  DO NOT set to less than 1
 
-  var mainRoutine = function(frame) { // Runs on every frame
+  var mainRoutine = function (frame) { // Runs on every frame
     gestureHandler(frame);  // routine for handling takeoff, landing and rotations
     handPos(frame); // all other actions
   }
 
-  var takeoff = function() {
+  var takeoff = function () {
   	flying = true; // enables actions to be published
   	return faye.publish("/drone/drone", {
       action: 'takeoff'
     });
    }
 
-  var land = function() {
+  var land = function () {
   	flying = false;	// prevents faye from publishing actions when drone has landed
   	return faye.publish("/drone/drone", {
       action: 'land'
     });
   }
 
-  var handPos = function(frame) {
+  var handPos = function (frame) {
     var hands = frame.hands // leap detects all hands in field of vision
     if (hands.length === 0 && !stopped) {
       stopped = true;
         $("rect#highlight").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/drone", {
             action: 'stop'
           })
@@ -59,7 +59,7 @@
         stopped = false;
         $(".left").attr({id: 'highlight'})
         $(".right").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
     	      action: 'left',
     	      speed: adjXspeed
@@ -69,7 +69,7 @@
         stopped = false;
         $(".right").attr({id: 'highlight'})
         $(".left").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
       	    action: 'right',
       	    speed: adjXspeed
@@ -81,7 +81,7 @@
         stopped = false;
         $(".up").attr({id: 'highlight'})
         $(".down").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
       	    action: 'up',
       	    speed: adjYspeed
@@ -91,7 +91,7 @@
         stopped = false;
         $(".down").attr({id: 'highlight'})
         $(".up").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
       	    action: 'down',
       	    speed: adjYspeed
@@ -103,7 +103,7 @@
         stopped = false;
         $(".front").attr({id: 'highlight'})
         $(".back").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
       	    action: 'front',
       	    speed: adjZspeed
@@ -113,7 +113,7 @@
         stopped = false;
         $(".back").attr({id: 'highlight'})
         $(".front").attr({id: ''})
-        setTimeout(function(){
+        setTimeout(function (){
           return faye.publish("/drone/move", {
       	    action: 'back',
       	    speed: adjZspeed
@@ -123,7 +123,7 @@
     }
   }
 
-  var gestureHandler = function(frame) { // handles rotation
+  var gestureHandler = function (frame) { // handles rotation
     var gestures = frame.gestures;
     if (gestures && gestures.length > 0) {
       stopped = false;
@@ -155,28 +155,28 @@
   };
 
   speed = 0.7; // used for rotation speed
-  var counterClockwise = function() {
+  var counterClockwise = function () {
     $(".counterClockwise").attr({id: 'highlight'})
     $(".clockwise").attr({id: ''})
     faye.publish("/drone/move", {
       action: 'counterClockwise',
       speed: speed
     })
-    setTimeout(function(){
+    setTimeout(function (){
       return faye.publish("/drone/drone", {
         action: 'stop'
       })
     }, timeout);
    };
 
-  var clockwise = function() {
+  var clockwise = function () {
     $(".clockwise").attr({id: 'highlight'})
     $(".counterClockwise").attr({id: ''})
     faye.publish("/drone/move", {
       action: 'clockwise',
       speed: speed
     })
-    setTimeout(function(){
+    setTimeout(function (){
       return faye.publish("/drone/drone", {
         action: 'stop'
       })
@@ -185,7 +185,7 @@
 
   controller = new Leap.Controller({enableGestures: true});
   controller.connect();
-  controller.on('frame', function(data) {
+  controller.on('frame', function (data) {
     mainRoutine(data)
   });
 

@@ -1,11 +1,11 @@
-(function() {
+(function () {
   
   var keymap, faye, speed, password;
 
-  $('form').on('submit', function(data){
+  $('form').on('submit', function (data){
     data.preventDefault()
     password = data.target[0].value;
-    $('#submission').val(' ');
+    $('#submission').val('');
   })
 
   faye = new Faye.Client("/faye", {
@@ -48,9 +48,9 @@
     }
   };
 
-  $(document).keydown(function(d) {
+  $(document).keydown(function (d) {
     var action;
-    if (!keymap[d.keyCode] || password !== 'masterpassword') { // if key pressed is not assigned in the keymap above, return out of the function.
+    if (!keymap[d.keyCode] || password !== 'masterpassword') { // prevents accidental keyboard controls: if key pressed is not assigned in the keymap above, return out of the function.
       return;
     }
     d.preventDefault(); // prevents a key's default action from occuring
@@ -69,7 +69,7 @@
     } 
   });
 
-  $(document).keyup(function() {  // stops the drone when no key is pressed
+  $(document).keyup(function () {  // stops the drone when no key is pressed
     return faye.publish("/drone/drone", {
       action: 'stop'
     });
