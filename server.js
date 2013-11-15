@@ -1,4 +1,3 @@
-(function () {
   var express, path, drone, server, app, faye, client, leap, controller;
 
   express = require("express");
@@ -40,5 +39,3 @@
   server.listen(app.get('port'), function () {
     return console.log("Express server listening on port" + app.get("port"));
   })
-
-}).call(this);

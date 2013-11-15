@@ -12,7 +12,7 @@
 	<script>
 	  $(function () {
       function startArDRoneStream() {
-          new NodecopterStream(document.getElementById("placeholder"), {port: 3001});
+        new NodecopterStream($("#placeholder"), {port: 3001});
       }
       startArDRoneStream();
     })
@@ -27,39 +27,29 @@
 	        </td>
 	         <td>
             	<svg width="500px" height="350px">
-							  <g>
-								  <rect class = "front" x='100' y='0' width="50" height="50" />
-								  <text id = "directionText" x = '118' y = '32'> F </text>
-							  </g>
-							  <g>
-								  <rect class = "left" x='50' y='50' width="50" height="50" text="L"/>
-								  <text id = "directionText" x = '68' y = '82'> L </text>
-							  </g>
-							  <g>
+								<rect class = "front" x='100' y='0' width="50" height="50" />
+								<text id = "directionText" x = '118' y = '32'> F </text>
+								
+								<rect class = "left" x='50' y='50' width="50" height="50" text="L"/>
+								<text id = "directionText" x = '68' y = '82'> L </text>
+							  
 							  <rect class = "right" x='150' y='50' width="50" height="50"/>
 							  <text id = "directionText" x = '168' y = '82'> R </text>
-							  </g>
-							  <g>
+							  
 							  <rect class = "back" x='100' y='100' width="50" height="50"/>
 							  <text id = "directionText" x = '118' y = '132'> B </text>
-							  </g>
-
-							  <g>
+							  
 							  <rect class = "up" x='300' y='0' width="50" height="50" />
 							  <text id = "directionText" x = '318' y = '32'> U </text>
-							  </g>
-							  <g>
+							  
 							  <rect class = "clockwise" x='350' y='50' width="50" height="50" />
 							  <text id = "directionText" x = '360' y = '82'> RR </text>
-							  </g>
-							  <g>
+							  
 							  <rect class = "down" x='300' y='100' width="50" height="50"/>
 							  <text id = "directionText" x = '318' y = '132'> D </text>
-							  </g>
-							  <g>
+							  
 							  <rect class = "counterClockwise" x='250' y='50' width="50" height="50" />
 							  <text id = "directionText" x = '260' y = '82'> RL </text>
-							  </g>
 							</svg>
 	        </td>
 	    </tr>
