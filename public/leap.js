@@ -8,7 +8,7 @@
 
   flying = false; // used to prevent action while drone is dormant
   timeout = 400;  // used for each server publish
-  speedAdjuster = 3.5; // higher number decreases action speed.  DO NOT set to less than 1
+  speedAdjuster = 2.5; // higher number decreases action speed.  DO NOT set to less than 1
 
   var mainRoutine = function (frame) { // Runs on every frame
     gestureHandler(frame);  // routine for handling takeoff, landing and rotations
@@ -154,7 +154,7 @@
     }
   };
 
-  speed = 0.7; // used for rotation speed
+  speed = 0.5; // used for rotation speed
   var counterClockwise = function () {
     $(".counterClockwise").attr({id: 'highlight'})
     $(".clockwise").attr({id: ''})

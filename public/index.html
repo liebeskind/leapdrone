@@ -12,7 +12,7 @@
 	<script>
 	  $(function () {
       function startArDRoneStream() {
-        new NodecopterStream($("#placeholder"), {port: 3001});
+        new NodecopterStream(document.getElementById("placeholder"), {port: 3001});
       }
       startArDRoneStream();
     })
