@@ -12,7 +12,6 @@ How to Fly
 4. To rotate, make a circle with pointer finger in a clockwise or counterclockwise motion
 5. To land, gesture with pointer finger as though left clicking a mouse
 
-
 Stack
 =======================
 
@@ -22,7 +21,17 @@ Faye for publishing and subscribing between leap, server and drone
 Leap.js for converting leap motions into javascript
 jQuery for browser displays and accessing keypresses for optional keyboard controls
 
+Learn More
+=======================
+
+http://wp.me/p2BKrb-4k - Read my blog post about why I did this and what I hope for the future
+
+YouTube Video of Drone in Flight
+=======================
+
+http://youtu.be/hfq2SisPvCU
+
 Thanks
 =======================
 
-Thanks to @felixge for AR-Drone (converts AR Drone's SDK into Javascript) and @bkw for Dronestream (converts drone's video feed into usable h264 and renders WebGL canvas).
+Thanks to Hack Reactor for an awesome learning environment, @felixge for AR-Drone and @bkw for Dronestream.
