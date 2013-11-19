@@ -11,8 +11,7 @@
     app.set('port', process.env.PORT || 3000); // process.env.PORT adjusts PORT to accept environmental parameter (ie deploying to Heroku)
     app.use(app.router);  // optimizes performance when put before static, but isn't necessary as express will implicity add.  Putting before static prevents accidentally-named static files from overwriting routes
     app.use(express.static(__dirname + '/public'));  // serves static files from disk
-    app.use("/node_modules", express.static(path.join(__dirname, 'node_modules'))); // adds in jQuery
-    return app.use("/bower_components", express.static(path.join(__dirname, 'bower_components'))); // adds in jQuery
+    return app.use("/node_modules", express.static(path.join(__dirname, 'node_modules'))); // adds in jQuery
   });
 
   server = require('http').createServer(app);

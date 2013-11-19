@@ -2,11 +2,8 @@
   "name": "leap-browser-nodecopter",
   "description": "Uses Node.js and Leap Motion to control an AR Drone while streaming video to the browser",
   "version": "0.0.1",
-  "engines": {
-    "node": "0.10.x",
-    "npm": "1.3.x"
-  },
   "dependencies": {
+    "jquery": "~1.8",
     "express": "3.x",
     "ar-drone": "git://github.com/felixge/node-ar-drone.git",
     "faye": "1.x",
